@@ -128,21 +128,21 @@ class ExternalCode(Component):
                 #     raise RuntimeError('Run stopped')
                 # else:
                 self.timed_out = True
-                raise RuntimeError('Timed out')
+                unknowns['success'] = 0.0 # raise RuntimeError('Timed out')
 
-            elif return_code:
-                if isinstance(self.stderr, str):
-                    if os.path.exists(self.stderr):
-                        stderrfile = open(self.stderr, 'r')
-                        error_desc = stderrfile.read()
-                        stderrfile.close()
-                        err_fragment = "\nError Output:\n%s" % error_desc
-                    else:
-                        err_fragment = "\n[stderr %r missing]" % self.stderr
-                else:
-                    err_fragment = error_msg
+            # elif return_code:
+            #     if isinstance(self.stderr, str):
+            #         if os.path.exists(self.stderr):
+            #             stderrfile = open(self.stderr, 'r')
+            #             error_desc = stderrfile.read()
+            #             stderrfile.close()
+            #             err_fragment = "\nError Output:\n%s" % error_desc
+            #         else:
+            #             err_fragment = "\n[stderr %r missing]" % self.stderr
+            #     else:
+            #         err_fragment = error_msg
 
-                raise RuntimeError('return_code = %d%s' % (return_code, err_fragment))
+            #     raise RuntimeError('return_code = %d%s' % (return_code, err_fragment))
 
             if self.options['check_external_outputs']:
                 missing_files = self._check_for_files(input=False)

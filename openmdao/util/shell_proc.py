@@ -4,6 +4,12 @@ import subprocess
 import sys
 import time
 
+import ctypes
+SEM_NOGPFAULTERRORBOX = 0x0002 # From MSDN
+ctypes.windll.kernel32.SetErrorMode(SEM_NOGPFAULTERRORBOX);
+CREATE_NO_WINDOW = 0x08000000    # From Windows API
+subprocess_flags = CREATE_NO_WINDOW
+
 PIPE = subprocess.PIPE
 STDOUT = subprocess.STDOUT
 DEV_NULL = 'nul:' if sys.platform == 'win32' else '/dev/null'
@@ -74,7 +80,8 @@ class ShellProc(subprocess.Popen):
             subprocess.Popen.__init__(self, args, stdin=self._inp,
                                       stdout=self._out, stderr=self._err,
                                       shell=shell, env=environ,
-                                      universal_newlines=universal_newlines)
+                                      universal_newlines=universal_newlines,
+                                      creationflags=subprocess_flags)        
         except Exception:
             self.close_files()
             raise
@@ -98,7 +105,7 @@ class ShellProc(subprocess.Popen):
             A value of zero implies an infinite maximum wait.
 
         """
-        super(ShellProc, self).terminate()
+        super(ShellProc, self).kill()
         if timeout is not None:
             return self.wait(timeout=timeout)
 
